@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optima Performance — Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark:      #2A2A2A;
+    --off-white: #EDEDED;
+    --white:     #FFFFFF;
+    --orange:    #FF9A40;
+    --green:     #79B15E;
+    --red:       #E74747;
+    --blue:      #5E75B1;
+    --grey:      #888888;
+    --mid:       #1A1A1A;
+  }
+
+  body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* all content above grain */
+  .landing, .quiz-screen, .email-gate, .results-screen { position: relative; z-index: 1; }
+
+  /* ── LANDING ── */
+  .landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .brand-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 52px;
+  }
+
+  .brand-logo .wordmark {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--off-white);
+    text-transform: uppercase;
+  }
+
+  .brand-logo .tagline {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--grey);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .landing-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .landing h1 {
+    font-size: clamp(34px, 6vw, 60px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    max-width: 680px;
+    margin-bottom: 22px;
+  }
+
+  .landing h1 em {
+    font-style: normal;
+    color: var(--orange);
+  }
+
+  .landing > p {
+    color: var(--off-white);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 52px;
+  }
+
+  .quiz-select {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .quiz-card {
+    background: var(--mid);
+    border: 1.5px solid #3a3a3a;
+    border-radius: 20px;
+    padding: 36px 30px;
+    width: 270px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    text-align: left;
+  }
+
+  .quiz-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-4px);
+    background: #222;
+  }
+
+  .quiz-card .card-icon {
+    font-size: 36px;
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  .quiz-card .card-pill {
+    display: inline-block;
+    background: rgba(255,154,64,0.15);
+    color: var(--orange);
+    border: 1px solid rgba(255,154,64,0.3);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .quiz-card h3 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .quiz-card p {
+    font-size: 13px;
+    color: #999;
+    line-height: 1.6;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  .quiz-card .card-arrow {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--orange);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-screen {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  .quiz-screen.active { display: flex; }
+
+  .quiz-header {
+    background: var(--mid);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+  }
+
+  .quiz-header .back {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--grey);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+  }
+
+  .quiz-header .back:hover { color: var(--white); }
+
+  .quiz-header .quiz-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--off-white);
+  }
+
+  .progress-track {
+    height: 2px;
+    background: #333;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    transition: width 0.45s ease;
+  }
+
+  .quiz-body {
+    flex: 1;
+    padding: 52px 24px 24px;
+    max-width: 620px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .q-counter {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .q-text {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 36px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    background: var(--mid);
+    border: 1.5px solid #3a3a3a;
+    border-radius: 12px;
+    padding: 17px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: left;
+    color: var(--off-white);
+  }
+
+  .option:hover {
+    border-color: var(--orange);
+    background: #252525;
+  }
+
+  .option.selected {
+    border-color: var(--orange);
+    background: rgba(255,154,64,0.1);
+    color: var(--white);
+  }
+
+  .quiz-footer {
+    padding: 20px 24px;
+    max-width: 620px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-primary {
+    background: var(--orange);
+    color: var(--dark);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 34px;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Poppins', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:disabled { opacity: 0.25; cursor: not-allowed; }
+  .btn-primary:not(:disabled):hover { opacity: 0.85; }
+
+  /* ── EMAIL GATE ── */
+  .email-gate {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .email-gate.active { display: flex; }
+
+  .lock-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,154,64,0.12);
+    border: 1.5px solid rgba(255,154,64,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 28px;
+  }
+
+  .email-gate h2 {
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    max-width: 460px;
+    margin-bottom: 14px;
+    line-height: 1.1;
+  }
+
+  .email-gate > p {
+    color: var(--off-white);
+    font-size: 15px;
+    max-width: 400px;
+    margin-bottom: 36px;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .gate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .gate-form input {
+    background: var(--mid);
+    border: 1.5px solid #3a3a3a;
+    border-radius: 10px;
+    padding: 15px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    font-family: 'Poppins', Arial, sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .gate-form input::placeholder { color: #555; }
+  .gate-form input:focus { border-color: var(--orange); }
+
+  .gate-form .btn-primary { width: 100%; padding: 16px; font-size: 15px; }
+
+  .gate-privacy {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--grey);
+    margin-top: 14px;
+    max-width: 360px;
+    line-height: 1.5;
+  }
+
+  /* ── RESULTS ── */
+  .results-screen {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  .results-screen.active { display: flex; }
+
+  .results-hero {
+    background: var(--mid);
+    padding: 36px 24px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+  }
+
+  .results-hero .hero-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 20px;
+  }
+
+  .score-circle {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    flex-direction: column;
+  }
+
+  .score-circle .score-num {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .score-circle .score-unit {
+    font-size: 10px;
+    color: var(--grey);
+    font-weight: 600;
+  }
+
+  .score-status {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .results-body {
+    flex: 1;
+    padding: 40px 24px 60px;
+    max-width: 620px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .summary-block {
+    background: var(--mid);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 12px 12px 0;
+    padding: 22px 20px;
+    margin-bottom: 36px;
+  }
+
+  .summary-block h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .summary-block p {
+    font-size: 13px;
+    color: #bbb;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+
+  .cat-block { margin-bottom: 26px; }
+
+  .cat-block .cat-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .cat-block .cat-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .cat-block .cat-pct {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--orange);
+  }
+
+  .bar-track {
+    background: #333;
+    border-radius: 3px;
+    height: 4px;
+    margin-bottom: 10px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--orange);
+    transition: width 1.1s ease;
+    width: 0%;
+  }
+
+  .cat-block p {
+    font-size: 13px;
+    color: #999;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .divider {
+    height: 1px;
+    background: #333;
+    margin: 32px 0;
+  }
+
+  /* ── GODFATHER ── */
+  .godfather-block {
+    background: var(--off-white);
+    color: var(--dark);
+    border-radius: 20px;
+    padding: 36px 28px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .godfather-block .gf-pill {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--dark);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .godfather-block h2 {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 14px;
+    color: var(--dark);
+  }
+
+  .godfather-block > p {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
+  }
+
+  .gf-includes {
+    list-style: none;
+    text-align: left;
+    margin: 0 auto 28px;
+    max-width: 400px;
+  }
+
+  .gf-includes li {
+    font-size: 13px;
+    color: var(--dark);
+    padding: 7px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 500;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .gf-includes li:last-child { border-bottom: none; }
+
+  .gf-includes li::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .btn-book {
+    display: inline-block;
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 16px 36px;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Poppins', Arial, sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s;
+  }
+
+  .btn-book:hover { opacity: 0.8; }
+
+  .btn-book-note {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    margin-top: 10px;
+    font-weight: 400;
+  }
+
+  /* ── COACH CARD ── */
+  .coach-card {
+    background: var(--mid);
+    border: 1.5px solid #3a3a3a;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+
+  .coach-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--dark);
+    flex-shrink: 0;
+  }
+
+  .coach-info .coach-name {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+  }
+
+  .coach-info .coach-role {
+    font-size: 12px;
+    color: var(--grey);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  .coach-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* ── FOOTER ── */
+  .results-footer {
+    text-align: center;
+    padding-bottom: 48px;
+  }
+
+  .results-footer .footer-logo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 4px;
+  }
+
+  .results-footer .footer-tag {
+    font-size: 10px;
+    color: #555;
+    font-weight: 400;
+  }
+
+  @media (max-width: 480px) {
+    .quiz-select { flex-direction: column; align-items: center; }
+    .quiz-card { width: 100%; max-width: 340px; }
+    .coach-card { flex-direction: column; text-align: center; }
+  }
+
+  .spider-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 32px 0 8px;
+  }
+  canvas.spider { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<div class="landing" id="landing">
+  <div class="brand-logo">
+    <img src="https://i.ibb.co/1fZwVmZq/LOGO-WHITE-2.png" alt="Optima Performance" style="height:48px;width:auto;margin-bottom:8px;" />
+    
+  </div>
+  <div class="landing-eyebrow">Free Performance Assessment</div>
+  <h1>Find out how you <em>really</em> move and breathe.</h1>
+  <p>Two short assessments. Instant personalised results. Discover exactly how your breathing and movement are affecting your performance.</p>
+  <div class="quiz-select">
+    <div class="quiz-card" onclick="startQuiz('breathing')">
+      <span class="card-icon">🫁</span>
+      <div class="card-pill">5 minutes</div>
+      <h3>Breathwork Assessment</h3>
+      <p>Discover how your breathing patterns are affecting your performance, recovery, and focus under pressure.</p>
+      <span class="card-arrow">Start assessment →</span>
+    </div>
+    <div class="quiz-card" onclick="startQuiz('mobility')">
+      <span class="card-icon">⚡</span>
+      <div class="card-pill">5 minutes</div>
+      <h3>Mobility Assessment</h3>
+      <p>Identify the movement restrictions and dysfunctional patterns that are limiting your athletic performance.</p>
+      <span class="card-arrow">Start assessment →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BREATHING QUIZ ══ -->
+<div class="quiz-screen" id="quiz-breathing">
+  <div class="quiz-header">
+    <div class="back" onclick="goBack()">← Back</div>
+    <div class="quiz-title">Breathwork Assessment</div>
+    <div style="width:50px"></div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="pb-breathing"></div></div>
+  <div class="quiz-body">
+    <div class="q-counter" id="counter-breathing"></div>
+    <div class="q-text" id="question-breathing"></div>
+    <div class="options" id="options-breathing"></div>
+  </div>
+  <div class="quiz-footer">
+    <button class="btn-primary" id="next-breathing" disabled onclick="nextQuestion('breathing')">Continue</button>
+  </div>
+</div>
+
+<!-- ══ MOBILITY QUIZ ══ -->
+<div class="quiz-screen" id="quiz-mobility">
+  <div class="quiz-header">
+    <div class="back" onclick="goBack()">← Back</div>
+    <div class="quiz-title">Mobility Assessment</div>
+    <div style="width:50px"></div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="pb-mobility"></div></div>
+  <div class="quiz-body">
+    <div class="q-counter" id="counter-mobility"></div>
+    <div class="q-text" id="question-mobility"></div>
+    <div class="options" id="options-mobility"></div>
+  </div>
+  <div class="quiz-footer">
+    <button class="btn-primary" id="next-mobility" disabled onclick="nextQuestion('mobility')">Continue</button>
+  </div>
+</div>
+
+<!-- ══ EMAIL GATE ══ -->
+<div class="email-gate" id="email-gate">
+  <div class="lock-icon">🔒</div>
+  <h2>Your results are ready.</h2>
+  <p>Enter your details below to unlock your full personalised assessment report. We will also send you a free 5 minute functional breathing audio to your inbox to get you started straight away.</p>
+  <div class="gate-form">
+    <input type="text" id="gate-name" placeholder="First name" autocomplete="given-name" />
+    <input type="email" id="gate-email" placeholder="Email address" autocomplete="email" />
+    <button class="btn-primary" onclick="unlockResults()">Unlock My Results 🫁</button>
+  </div>
+  <p class="gate-privacy">We will email your free 5 minute breathing audio immediately. No spam. Unsubscribe anytime.</p>
+</div>
+
+<!-- ══ RESULTS: BREATHING ══ -->
+<div class="results-screen" id="results-breathing">
+  <div class="results-hero">
+    <div class="hero-eyebrow">Your Breathwork Assessment</div>
+    <div class="score-circle" id="ring-b">
+      <span class="score-num" id="score-num-b">—</span>
+      <span class="score-unit">/ 100</span>
+    </div>
+    <div class="score-status" id="score-status-b"></div>
+  </div>
+  <div class="results-body">
+    <div class="summary-block" id="summary-b"></div>
+
+    <div class="section-label">Your results breakdown</div>
+    <div class="spider-wrap"><canvas class="spider" id="spider-breathing" width="280" height="280"></canvas></div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">🫁 Breathing Mechanics</div>
+        <div class="cat-pct" id="pct-mechanics"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-mechanics"></div></div>
+      <p id="txt-mechanics"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">🧠 Nervous System Regulation</div>
+        <div class="cat-pct" id="pct-nervous"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-nervous"></div></div>
+      <p id="txt-nervous"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">⚡ Performance Under Pressure</div>
+        <div class="cat-pct" id="pct-pressure"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-pressure"></div></div>
+      <p id="txt-pressure"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">💤 Recovery and Sleep</div>
+        <div class="cat-pct" id="pct-sleep"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-sleep"></div></div>
+      <p id="txt-sleep"></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="godfather-block">
+      <div class="gf-pill">Free — Limited Spots</div>
+      <h2>Book your free 30 minute call with Rory.</h2>
+      <p>Based on your results, Rory will build a personalised breathwork plan around your sport, your lifestyle, and your specific goals. No pitch. No pressure. Just a genuine conversation.</p>
+      <ul class="gf-includes">
+        <li>A full review of your breathing patterns and what they mean for your performance</li>
+        <li>Practical breathwork tools tailored to your assessment results</li>
+        <li>A clear starting point you can implement the same day</li>
+        <li>Honest advice on whether 1:1 coaching is the right next step</li>
+      </ul>
+      <a class="btn-book" href="https://calendly.com/rorypenrose1/30min" target="_blank">Book My Free Call 🫁</a>
+      <span class="btn-book-note">Free. No obligation. No sales pitch.</span>
+    </div>
+
+    <div class="coach-label">You will be speaking with</div>
+    <div class="coach-card">
+      <div class="coach-avatar" style="background:none;padding:0;overflow:hidden;">
+        <img src="https://i.ibb.co/NqwRHBN/RORY1.png" alt="Rory Penrose" style="width:52px;height:52px;object-fit:cover;object-position:top center;border-radius:50%;" />
+      </div>
+      <div class="coach-info">
+        <div class="coach-name">Rory Penrose</div>
+        <div class="coach-role">Next Gen Performance Coach<br>Current England Men's International · 200hr YTT · Pranayama Qualified</div>
+      </div>
+    </div>
+
+    <div class="results-footer">
+      <img src="https://i.ibb.co/1fZwVmZq/LOGO-WHITE-2.png" alt="Optima Performance" style="height:28px;width:auto;margin-bottom:6px;filter:opacity(0.5);" />
+      
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS: MOBILITY ══ -->
+<div class="results-screen" id="results-mobility">
+  <div class="results-hero">
+    <div class="hero-eyebrow">Your Mobility Assessment</div>
+    <div class="score-circle" id="ring-m">
+      <span class="score-num" id="score-num-m">—</span>
+      <span class="score-unit">/ 100</span>
+    </div>
+    <div class="score-status" id="score-status-m"></div>
+  </div>
+  <div class="results-body">
+    <div class="summary-block" id="summary-m"></div>
+
+    <div class="section-label">Your results breakdown</div>
+    <div class="spider-wrap"><canvas class="spider" id="spider-mobility" width="280" height="280"></canvas></div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">🦵 Hip and Groin Mobility</div>
+        <div class="cat-pct" id="pct-hip"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-hip"></div></div>
+      <p id="txt-hip"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">🔄 Thoracic Spine and Shoulders</div>
+        <div class="cat-pct" id="pct-thoracic"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-thoracic"></div></div>
+      <p id="txt-thoracic"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">⚡ Movement Efficiency</div>
+        <div class="cat-pct" id="pct-efficiency"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-efficiency"></div></div>
+      <p id="txt-efficiency"></p>
+    </div>
+
+    <div class="cat-block">
+      <div class="cat-head">
+        <div class="cat-name">🛡️ Injury Resilience</div>
+        <div class="cat-pct" id="pct-injury"></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="bar-injury"></div></div>
+      <p id="txt-injury"></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="godfather-block">
+      <div class="gf-pill">Free — Limited Spots</div>
+      <h2>Book your free 30 minute call with Rory.</h2>
+      <p>Based on your mobility results, Rory will build a personalised movement plan around your sport, your body, and your specific restrictions. No pitch. No pressure. Just a genuine conversation.</p>
+      <ul class="gf-includes">
+        <li>A full breakdown of your movement restrictions and what is causing them</li>
+        <li>Targeted mobility protocols built around your assessment results</li>
+        <li>How to integrate breathwork and movement into your existing routine</li>
+        <li>Honest advice on whether 1:1 coaching is the right next step</li>
+      </ul>
+      <a class="btn-book" href="https://calendly.com/rorypenrose1/30min" target="_blank">Book My Free Call 🫁</a>
+      <span class="btn-book-note">Free. No obligation. No sales pitch.</span>
+    </div>
+
+    <div class="coach-label">You will be speaking with</div>
+    <div class="coach-card">
+      <div class="coach-avatar" style="background:none;padding:0;overflow:hidden;">
+        <img src="https://i.ibb.co/NqwRHBN/RORY1.png" alt="Rory Penrose" style="width:52px;height:52px;object-fit:cover;object-position:top center;border-radius:50%;" />
+      </div>
+      <div class="coach-info">
+        <div class="coach-name">Rory Penrose</div>
+        <div class="coach-role">Next Gen Performance Coach<br>Current England Men's International · 200hr YTT · Pranayama Qualified</div>
+      </div>
+    </div>
+
+    <div class="results-footer">
+      <img src="https://i.ibb.co/1fZwVmZq/LOGO-WHITE-2.png" alt="Optima Performance" style="height:28px;width:auto;margin-bottom:6px;filter:opacity(0.5);" />
+      
+    </div>
+  </div>
+</div>
+
+<script>
+const quizData = {
+  breathing: {
+    questions: [
+      { q: "When you take a deep breath, which part of your body moves first?", options: [{ t: "My chest and shoulders rise", s: 0 },{ t: "My belly expands outward first", s: 3 },{ t: "Both move at the same time", s: 1 },{ t: "I have never paid attention to this", s: 0 }] },
+      { q: "How do you breathe at rest during the day?", options: [{ t: "Mostly through my mouth", s: 0 },{ t: "Mostly through my nose", s: 3 },{ t: "A mix of both depending on the situation", s: 1 },{ t: "I am not sure", s: 0 }] },
+      { q: "How does your breathing change before a big game or high pressure moment?", options: [{ t: "It gets fast and shallow and I feel anxious", s: 0 },{ t: "I notice it changes but can manage it", s: 1 },{ t: "I use a breathing technique deliberately to stay calm", s: 3 },{ t: "I do not notice any change", s: 2 }] },
+      { q: "How quickly does your breathing return to normal after intense exercise?", options: [{ t: "It takes more than 5 minutes", s: 0 },{ t: "Around 3 to 5 minutes", s: 1 },{ t: "Within 1 to 2 minutes", s: 3 },{ t: "I have never paid attention to this", s: 0 }] },
+      { q: "Do you ever feel breathless during exercise at intensities that should feel manageable?", options: [{ t: "Yes, regularly", s: 0 },{ t: "Occasionally", s: 1 },{ t: "Rarely", s: 2 },{ t: "Never", s: 3 }] },
+      { q: "How would you describe your overall sleep quality?", options: [{ t: "Poor — I wake frequently or feel unrefreshed", s: 0 },{ t: "Average — some nights are better than others", s: 1 },{ t: "Good — I sleep through most nights", s: 2 },{ t: "Excellent — I wake feeling fully restored", s: 3 }] },
+      { q: "Do you regularly experience any of the following?", options: [{ t: "Dry mouth on waking, snoring, or frequent yawning during the day", s: 0 },{ t: "One or two of the above occasionally", s: 1 },{ t: "None of the above", s: 3 },{ t: "I am not sure", s: 1 }] },
+      { q: "How often do you deliberately use your breath to manage stress or focus?", options: [{ t: "Never — I did not know you could", s: 0 },{ t: "Occasionally when things get difficult", s: 1 },{ t: "Sometimes before training or games", s: 2 },{ t: "Regularly as part of my daily routine", s: 3 }] },
+      { q: "How long can you comfortably hold your breath after a normal exhale?", options: [{ t: "Under 10 seconds", s: 0 },{ t: "10 to 20 seconds", s: 1 },{ t: "20 to 30 seconds", s: 2 },{ t: "Over 30 seconds", s: 3 }] }
+    ]
+  },
+  mobility: {
+    questions: [
+      { q: "When you squat as deep as possible, what happens?", options: [{ t: "My heels lift and my back rounds significantly", s: 0 },{ t: "My heels stay down but my torso leans heavily forward", s: 1 },{ t: "I can get reasonably deep with minor compensation", s: 2 },{ t: "I reach full depth comfortably with good posture", s: 3 }] },
+      { q: "How do your hips feel during training and daily life?", options: [{ t: "Constantly tight, restricted, or uncomfortable", s: 0 },{ t: "Often tight, especially after sitting or training", s: 1 },{ t: "Occasionally tight but generally manageable", s: 2 },{ t: "Mobile and rarely a problem", s: 3 }] },
+      { q: "Can you sit comfortably cross-legged on the floor with both knees close to the ground?", options: [{ t: "No — my knees are very high and it is uncomfortable", s: 0 },{ t: "My knees are elevated but I can hold it for a while", s: 1 },{ t: "Yes, with some mild discomfort", s: 2 },{ t: "Yes, comfortably with knees close to the floor", s: 3 }] },
+      { q: "How does your lower back feel during or after training sessions?", options: [{ t: "I regularly experience pain or significant tightness", s: 0 },{ t: "It gets uncomfortable after long or heavy sessions", s: 1 },{ t: "Occasionally tight but not a major issue", s: 2 },{ t: "Rarely causes any problems", s: 3 }] },
+      { q: "Can you rotate your thoracic spine freely in both directions?", options: [{ t: "No — rotation feels very restricted and uncomfortable", s: 0 },{ t: "It is limited on one or both sides", s: 1 },{ t: "Reasonably mobile with some minor restriction", s: 2 },{ t: "Yes, freely and without any discomfort", s: 3 }] },
+      { q: "Have you experienced any recurring muscle injuries in the last 12 months?", options: [{ t: "Yes — multiple times in the same area", s: 0 },{ t: "Yes — once or twice", s: 1 },{ t: "Minor strains but nothing serious or recurring", s: 2 },{ t: "No recurring injuries", s: 3 }] },
+      { q: "How would you describe your ability to change direction explosively?", options: [{ t: "I feel stiff and slow when cutting or changing direction", s: 0 },{ t: "I can do it but it costs a lot of energy", s: 1 },{ t: "Reasonably good but there is room for improvement", s: 2 },{ t: "Explosive and effortless", s: 3 }] },
+      { q: "How often do you include deliberate mobility or flexibility work in your routine?", options: [{ t: "Never", s: 0 },{ t: "Occasionally when something feels sore", s: 1 },{ t: "A few times a week", s: 2 },{ t: "Daily as a non-negotiable part of my training", s: 3 }] },
+      { q: "Can you raise one arm fully overhead while keeping your lower back flat against a wall?", options: [{ t: "No — my back arches significantly to get the arm up", s: 0 },{ t: "Partially — with some back arching", s: 1 },{ t: "Yes on one side better than the other", s: 2 },{ t: "Yes, comfortably on both sides", s: 3 }] }
+    ]
+  }
+};
+
+let activeQuiz = null, qIndex = 0, answers = [], picked = null, userName = '';
+
+function startQuiz(type) {
+  activeQuiz = type; qIndex = 0; answers = []; picked = null;
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('quiz-' + type).classList.add('active');
+  renderQ();
+}
+
+function goBack() {
+  document.querySelectorAll('.quiz-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('landing').style.display = 'flex';
+}
+
+function renderQ() {
+  const qs = quizData[activeQuiz].questions;
+  const q = qs[qIndex];
+  const total = qs.length;
+  const pct = (qIndex / total) * 100;
+
+  document.getElementById('pb-' + activeQuiz).style.width = pct + '%';
+  document.getElementById('counter-' + activeQuiz).textContent = 'Question ' + (qIndex + 1) + ' of ' + total;
+  document.getElementById('question-' + activeQuiz).textContent = q.q;
+
+  const cont = document.getElementById('options-' + activeQuiz);
+  cont.innerHTML = '';
+  picked = null;
+  document.getElementById('next-' + activeQuiz).disabled = true;
+
+  q.options.forEach((o, i) => {
+    const d = document.createElement('div');
+    d.className = 'option';
+    d.textContent = o.t;
+    d.onclick = () => {
+      cont.querySelectorAll('.option').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+      picked = i;
+      document.getElementById('next-' + activeQuiz).disabled = false;
+    };
+    cont.appendChild(d);
+  });
+}
+
+function nextQuestion(type) {
+  if (picked === null) return;
+  answers.push(quizData[type].questions[qIndex].options[picked].s);
+  qIndex++;
+  if (qIndex < quizData[type].questions.length) {
+    renderQ();
+  } else {
+    document.getElementById('quiz-' + type).classList.remove('active');
+    document.getElementById('email-gate').classList.add('active');
+  }
+}
+
+function unlockResults() {
+  const n = document.getElementById('gate-name').value.trim();
+  const e = document.getElementById('gate-email').value.trim();
+  if (!n || !e || !e.includes('@')) { alert('Please enter your name and a valid email address.'); return; }
+  userName = n;
+
+  // Calculate score for sending
+  const total = answers.reduce((a,b) => a+b, 0);
+  const max = quizData[activeQuiz].questions.length * 3;
+  const score = Math.round((total/max)*100);
+
+  // Send to Google Sheets via GET request
+  try {
+    const quizLabel = activeQuiz === 'breathing' ? 'Breathwork Assessment' : 'Mobility Assessment';
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbz8OAXNcizbMr1moh_clid_JknwXqAemm7NK0JLfhDGAP_WnyJ6vZrXlzAJYzWI1NGJ-w/exec';
+    const params = new URLSearchParams({
+      name: n,
+      email: e,
+      quiz: quizLabel,
+      score: score + '%'
+    });
+    const img = new Image();
+    img.src = SHEET_URL + '?' + params.toString();
+  } catch(err) {}
+
+  document.getElementById('email-gate').classList.remove('active');
+  activeQuiz === 'breathing' ? showBreathing() : showMobility();
+}
+
+function scoreLabel(p) {
+  if (p >= 80) return { text: 'Strong foundations', color: '#79B15E' };
+  if (p >= 55) return { text: 'Developing', color: '#FF9A40' };
+  return { text: 'Needs attention', color: '#E74747' };
+}
+
+function animateBar(id, pctId, val) {
+  document.getElementById(pctId).textContent = val + '%';
+  setTimeout(() => { document.getElementById(id).style.width = val + '%'; }, 200);
+}
+
+function showBreathing() {
+  const screen = document.getElementById('results-breathing');
+  screen.classList.add('active');
+  const total = answers.reduce((a,b) => a+b, 0);
+  const max = quizData.breathing.questions.length * 3;
+  const pct = Math.round((total/max)*100);
+  const sl = scoreLabel(pct);
+
+  document.getElementById('score-num-b').textContent = pct;
+  document.getElementById('score-status-b').textContent = sl.text;
+  document.getElementById('score-status-b').style.color = sl.color;
+  document.getElementById('ring-b').style.borderColor = sl.color;
+
+  const sb = document.getElementById('summary-b');
+  if (pct >= 80) {
+    sb.innerHTML = '<h3>Well trained respiratory system, ' + userName + '.</h3><p>Your breathing mechanics are in strong shape. You have built solid foundations and are already using your breath as a performance tool. The next step is refining CO2 tolerance and integrating advanced protocols into your routine.</p>';
+  } else if (pct >= 55) {
+    sb.innerHTML = '<h3>You are partway there, ' + userName + '.</h3><p>You have some awareness of your breath but clear patterns are working against your performance. Dysfunctional breathing under pressure, during recovery, or at rest is costing you more than you realise. The good news is these are entirely fixable with the right guidance.</p>';
+  } else {
+    sb.innerHTML = '<h3>Your breathing is holding you back, ' + userName + '.</h3><p>Most athletes in this range are breathing dysfunctionally without realising it. Chronic chest breathing, mouth breathing, and poor CO2 tolerance are directly affecting your performance, recovery, and sleep. This is not about fitness. It is about mechanics. And it changes quickly with the right approach.</p>';
+  }
+
+  const a = answers;
+  const mech = Math.round(((a[0]+a[2])/6)*100);
+  const nerv = Math.round(((a[3]+a[7])/6)*100);
+  const pres = Math.round(((a[2]+a[4])/6)*100);
+  const slp  = Math.round(((a[5]+a[6])/6)*100);
+
+  animateBar('bar-mechanics','pct-mechanics',mech);
+  animateBar('bar-nervous','pct-nervous',nerv);
+  animateBar('bar-pressure','pct-pressure',pres);
+  animateBar('bar-sleep','pct-sleep',slp);
+  setTimeout(() => {
+    drawSpider('spider-breathing',
+      ['Mechanics', 'Nervous\nSystem', 'Pressure', 'Sleep'],
+      [mech, nerv, pres, slp],
+      '#FF9A40'
+    );
+  }, 400);
+
+  document.getElementById('txt-mechanics').textContent = mech >= 67 ? 'Your diaphragm is engaging well and you are breathing in the right pattern most of the time. Good foundation to build on.' : mech >= 34 ? 'Chest breathing is partially present. Your diaphragm is underused in some contexts and your breathing efficiency is being compromised as a result.' : 'Chest breathing is your dominant pattern. Your diaphragm is significantly underused and your body works harder than necessary on every breath.';
+  document.getElementById('txt-nervous').textContent = nerv >= 67 ? 'You are using your breath effectively to regulate your nervous system. This gives you a meaningful edge in high pressure moments.' : nerv >= 34 ? 'You have some awareness of how breath affects your state but are not yet using it consistently as a deliberate regulation tool.' : 'Your nervous system is likely chronically activated. Without deliberate breathwork your body stays in fight or flight longer than necessary after stress and exercise.';
+  document.getElementById('txt-pressure').textContent = pres >= 67 ? 'You stay composed under pressure and your breathing holds up when intensity rises. A real performance strength.' : pres >= 34 ? 'Pressure causes noticeable changes to your breathing that you can partially manage but not fully control.' : 'High pressure moments significantly disrupt your breathing mechanics. This is directly affecting your decision making and output when it matters most.';
+  document.getElementById('txt-sleep').textContent = slp >= 67 ? 'Your sleep quality is good and your breathing is likely supporting overnight recovery effectively.' : slp >= 34 ? 'Sleep quality is inconsistent. Breathing patterns during sleep may be reducing your recovery quality even when the hours are adequate.' : 'Poor sleep quality is affecting your recovery. Mouth breathing and dysfunctional breathing patterns during sleep are likely a significant contributing factor.';
+}
+
+function showMobility() {
+  const screen = document.getElementById('results-mobility');
+  screen.classList.add('active');
+  const total = answers.reduce((a,b) => a+b, 0);
+  const max = quizData.mobility.questions.length * 3;
+  const pct = Math.round((total/max)*100);
+  const sl = scoreLabel(pct);
+
+  document.getElementById('score-num-m').textContent = pct;
+  document.getElementById('score-status-m').textContent = sl.text;
+  document.getElementById('score-status-m').style.color = sl.color;
+  document.getElementById('ring-m').style.borderColor = sl.color;
+
+  const sm = document.getElementById('summary-m');
+  if (pct >= 80) {
+    sm.innerHTML = '<h3>Strong movement foundations, ' + userName + '.</h3><p>Your mobility and movement quality are in good shape. You move efficiently and your injury resilience is solid. The next step is refining specific movement chains and integrating breathwork to unlock the remaining performance ceiling.</p>';
+  } else if (pct >= 55) {
+    sm.innerHTML = '<h3>Some restrictions are costing you, ' + userName + '.</h3><p>You move reasonably well but there are identifiable restrictions in your hips, thoracic spine, or movement patterns that are limiting your efficiency and increasing injury risk. These are addressable with targeted consistent work.</p>';
+  } else {
+    sm.innerHTML = '<h3>Your movement patterns need attention, ' + userName + '.</h3><p>Significant restrictions are affecting your performance and increasing injury risk. Your body has developed compensatory movement patterns that cost extra energy and create vulnerability. The earlier you address these the faster you will see results.</p>';
+  }
+
+  const a = answers;
+  const hip  = Math.round(((a[1]+a[2])/6)*100);
+  const thor = Math.round(((a[4]+a[8])/6)*100);
+  const eff  = Math.round(((a[0]+a[6])/6)*100);
+  const inj  = Math.round(((a[5]+a[7])/6)*100);
+
+  animateBar('bar-hip','pct-hip',hip);
+  animateBar('bar-thoracic','pct-thoracic',thor);
+  animateBar('bar-efficiency','pct-efficiency',eff);
+  animateBar('bar-injury','pct-injury',inj);
+  setTimeout(() => {
+    drawSpider('spider-mobility',
+      ['Hips', 'Thoracic', 'Efficiency', 'Injury\nResilience'],
+      [hip, thor, eff, inj],
+      '#79B15E'
+    );
+  }, 400);
+
+  document.getElementById('txt-hip').textContent = hip >= 67 ? 'Your hip mobility is solid. You have good range through the hip flexors, groin, and external rotators.' : hip >= 34 ? 'Hip restriction is present and likely affecting your change of direction, explosive power, and lower back health.' : 'Significant hip tightness is limiting almost every athletic movement you make. This is one of the highest priority areas to address.';
+  document.getElementById('txt-thoracic').textContent = thor >= 67 ? 'Your thoracic spine and shoulder mobility are strong. You rotate well and your upper body moves freely.' : thor >= 34 ? 'Some restriction in your thoracic spine is affecting your rotation, shoulder mobility, and breathing capacity simultaneously.' : 'Thoracic restriction is significant. This is affecting your breathing mechanics, shoulder health, and rotational power all at once.';
+  document.getElementById('txt-efficiency').textContent = eff >= 67 ? 'You move efficiently with low energy cost. Your body generates force well through its natural movement patterns.' : eff >= 34 ? 'Movement inefficiency is costing you energy late in games. Some compensatory patterns are present and worth addressing.' : 'Significant movement inefficiency means you are working considerably harder than necessary to produce athletic output. Addressing this will feel like an immediate performance upgrade.';
+  document.getElementById('txt-injury').textContent = inj >= 67 ? 'Your injury resilience is strong. You train consistently and your body is holding up well under load.' : inj >= 34 ? 'Some elevated injury risk is present. Recurring tightness or past injuries suggest compensatory patterns that need targeted attention.' : 'Your injury risk is elevated. Recurring injuries and movement restrictions are warning signs that the body needs deliberate intervention before they become more serious.';
+}
+
+function drawSpider(canvasId, labels, values, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  // Scale up for retina
+  const DPR = window.devicePixelRatio || 1;
+  const SIZE = 320;
+  canvas.width = SIZE * DPR;
+  canvas.height = SIZE * DPR;
+  canvas.style.width = SIZE + 'px';
+  canvas.style.height = SIZE + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  const W = SIZE, H = SIZE;
+  const cx = W / 2, cy = H / 2;
+  const R = 98; // radar radius — labels go outside this
+  const n = labels.length;
+  const step = (Math.PI * 2) / n;
+  const offset = -Math.PI / 2;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ── Grid rings ──
+  [0.25, 0.5, 0.75, 1].forEach((frac, ri) => {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const angle = offset + i * step;
+      const x = cx + Math.cos(angle) * R * frac;
+      const y = cy + Math.sin(angle) * R * frac;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = ri === 3 ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // Subtle fill on outermost ring
+    if (ri === 3) {
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.fill();
+    }
+  });
+
+  // ── Axis lines ──
+  for (let i = 0; i < n; i++) {
+    const angle = offset + i * step;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // ── Build data points ──
+  const pts = values.map((v, i) => {
+    const angle = offset + i * step;
+    const r = (v / 100) * R;
+    return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+  });
+
+  // ── Glow shadow ──
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 18;
+
+  // ── Straight line polygon ──
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+  });
+  ctx.closePath();
+
+  // Fill with gradient
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grad.addColorStop(0, color + '55');
+  grad.addColorStop(1, color + '18');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  ctx.restore();
+
+  // ── Data point dots with glow ──
+  pts.forEach(p => {
+    // outer glow ring
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = color + '30';
+    ctx.fill();
+    // inner dot
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  // ── Labels on pill backgrounds ──
+  ctx.font = '600 11px Poppins, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for (let i = 0; i < n; i++) {
+    const angle = offset + i * step;
+    const lx = cx + Math.cos(angle) * (R + 34);
+    const ly = cy + Math.sin(angle) * (R + 34);
+
+    const lines = labels[i].split('\n');
+    const lineH = 14;
+    const textW = Math.max(...lines.map(l => ctx.measureText(l).width));
+    const pillW = textW + 16;
+    const pillH = lines.length * lineH + 8;
+
+    // Pill background
+    ctx.fillStyle = 'rgba(26,26,26,0.88)';
+    ctx.beginPath();
+    const pr = pillH / 2;
+    ctx.roundRect(lx - pillW / 2, ly - pillH / 2, pillW, pillH, pr);
+    ctx.fill();
+
+    // Label text
+    ctx.fillStyle = '#EDEDED';
+    lines.forEach((line, li) => {
+      const ty = ly - ((lines.length - 1) * lineH) / 2 + li * lineH;
+      ctx.fillText(line, lx, ty);
+    });
+  }
+}
+
+</script>
+</body>
+</html>
